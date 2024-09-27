@@ -1,3 +1,4 @@
+# 퀵정렬을 위한 파티션 함수
 def partition(l, r, nums):
     # Last element will be the pivot and the first element the pointer
     pivot, ptr = nums[r], l
@@ -10,11 +11,7 @@ def partition(l, r, nums):
     nums[ptr], nums[r] = nums[r], nums[ptr]
     return ptr
  
-# With quicksort() function, we will be utilizing the above code to obtain the pointer
-# at which the left values are all smaller than the number at pointer index and vice versa
-# for the right values.
- 
- 
+# 퀵정렬 함수
 def quicksort(l, r, nums):
     if len(nums) == 1:  # Terminating Condition for recursion. VERY IMPORTANT!
         return nums
@@ -24,9 +21,11 @@ def quicksort(l, r, nums):
         quicksort(pi+1, r, nums)  # Recursively sorting the right values
     return nums
  
- 
+# 퀵정렬 수행을 위한 1차원 리스트 
 example = [4, 5, 1, 2, 3]
 result = [1, 2, 3, 4, 5]
+
+# 퀵정렬의 인자로 시작인덱스, 끝인덱스(리스트의 크기 - 1), 퀵정렬을 수행할 리스트를 넘겨준다.
 print(quicksort(0, len(example)-1, example))
  
 example = [2, 5, 6, 1, 4, 6, 2, 4, 7, 8]
