@@ -1,10 +1,10 @@
-// C program for Merge Sort
+// C 로 구현된 합병 정렬
 #include <stdio.h>
 #include <stdlib.h>
 
-// Merges two subarrays of arr[].
-// First subarray is arr[l..m]
-// Second subarray is arr[m+1..r]
+// 배열에 있는 두 배열을 하나로 합친다.
+// 첫 구간은 I 부터 m 인덱스 까지.
+// 두번째 구간은 m+1 부터 r 인덱스 까지.
 void merge(int arr[], int l,
 		int m, int r)
 {
