@@ -1,13 +1,13 @@
 # 퀵정렬을 위한 파티션 함수
 def partition(l, r, nums):
-    # Last element will be the pivot and the first element the pointer
+    # 리스트의 마지막 요소를 피벗으로 지정하고, 첫 요소는 포인터
     pivot, ptr = nums[r], l
     for i in range(l, r):
         if nums[i] <= pivot:
             # Swapping values smaller than the pivot to the front
             nums[i], nums[ptr] = nums[ptr], nums[i]
             ptr += 1
-    # Finally swapping the last element with the pointer indexed number
+    # 연산 수행 후 피벗으로 지정된 인덱스의 값과, 시작값을 서로 스왑해준다.
     nums[ptr], nums[r] = nums[r], nums[ptr]
     return ptr
  
