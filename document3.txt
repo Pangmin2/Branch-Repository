@@ -1,0 +1,142 @@
+// 트라이 자료구조의 구현
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+#define ALPHA_SIZE 26
+
+typedef struct Trie_node {
+    struct Trie_node* children[ALPHA_SIZE];
+    bool word_end;
+} Trie_node;
+
+Trie_node* Get_node(void) {
+    Trie_node* node = (Trie_node*)malloc(sizeof(Trie_node));
+    node->word_end = false;
+    for (int i = 0; i < ALPHA_SIZE; i++)
+        node->children[i] = NULL;
+    return node;
+}
+
+void Word_insert(Trie_node* root, const char* word) {
+    Trie_node* node = root;
+    for (int i = 0; i < strlen(word); i++) {
+        int index = word[i] - 'a'; 
+        if (!node->children[index])
+            node->children[index] = Get_node();
+        node = node->children[index];
+    }
+    node->word_end = true;
+}
+
+bool Word_search(Trie_node* root, const char* word) {
+    Trie_node* node = root;
+    for (int i = 0; i < strlen(word); i++) {
+        int index = word[i] - 'a';
+        if (!node->children[index])
+            return false;
+        node = node->children[index];
+    }
+    return (node != NULL && node->word_end);
+}
+
+bool nochildren(Trie_node* curr) {
+    for (int i = 0; i < ALPHA_SIZE; i++) {
+        if (curr->children[i])
+            return false;
+    }
+    return true;
+}
+
+Trie_node* Word_delete(Trie_node* curr, const char* word, int depth) {
+    if (curr == NULL)
+        return NULL;
+
+    if (depth == strlen(word)) {
+        if (curr->word_end)
+            curr->word_end = false;
+
+        if (nochildren(curr)) {
+            free(curr);
+            curr = NULL;
+        }
+        return curr;
+    }
+
+    int index = word[depth] - 'a';
+    curr->children[index] = Word_delete(curr->children[index], word, depth + 1);
+
+    if (nochildren(curr) && curr->word_end == false) {
+        free(curr);
+        curr = NULL;
+    }
+
+    return curr;
+}
+
+void Trie_traverse(Trie_node* root, char* buffer, int depth) {
+    if (root->word_end) {
+        buffer[depth] = '\0';
+        printf("%s\n", buffer);
+    }
+    for (int i = 0; i < ALPHA_SIZE; i++) {
+        if (root->children[i]) {
+            buffer[depth] = 'a' + i;
+            Trie_traverse(root->children[i], buffer, depth + 1);
+        }
+    }
+}
+
+int main() {
+    Trie_node* root = Get_node();
+    char word[10];
+    int input;
+
+    printf("[트라이 자료구조 테스트]\n");
+    while (true) {
+        printf("============================\n");
+        printf("1. 트리 보기\n");
+        printf("2. 삽입\n");
+        printf("3. 검색\n");
+        printf("4. 삭제\n");
+        printf("5. 나가기\n");
+        printf("1~5 입력: ");
+        scanf("%d", &input);
+        switch (input) {
+        case 1:
+            printf("현재 단어:\n");
+            char buffer[100];
+            Trie_traverse(root, buffer, 0);
+            break;
+        case 2:
+            printf("단어 입력(10글자): ");
+            scanf("%s", word);
+            Word_insert(root, word);
+            printf("단어 '%s'가 입력됨.\n", word);
+            break;
+        case 3:
+            printf("검색할 단어 입력: ");
+            scanf("%s", word);
+            if (Word_search(root, word)) {
+                printf("단어 '%s'가 존재.\n", word);
+            }
+            else {
+                printf("단어 '%s'가 존재하지 않음.\n", word);
+            }
+            break;
+        case 4:
+            printf("삭제할 단어 입력: ");
+            scanf("%s", word);
+            root = Word_delete(root, word, 0);
+            printf("단어 '%s'가 삭제됨.\n", word);
+            break;
+        case 5:
+            printf("종료합니다.\n");
+            return 0;
+        default:
+            printf("잘못된 입력입니다.\n");
+        }
+    }
+    return 0;
+}
