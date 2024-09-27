@@ -1,0 +1,72 @@
+// C로 구현한 세그먼트 트리
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* tree;
+    int n;
+} SegmentTree;
+
+SegmentTree* Seg_tree_const(int* list, int n) {
+    SegmentTree* segTree = (SegmentTree*)malloc(sizeof(SegmentTree));
+    segTree->n = n;
+    segTree->tree = (int*)malloc(sizeof(int) * 4 * n);
+    Construct_tree(segTree, list, 0, 0, n - 1);
+    return segTree;
+}
+
+void Construct_tree(SegmentTree* segTree, int* arr, int node, int start, int end) {
+    if (start == end) {
+        segTree->tree[node] = arr[start];
+    }
+    else {
+        int mid = (start + end) / 2;
+        Construct_tree(segTree, arr, 2 * node + 1, start, mid);
+        Construct_tree(segTree, arr, 2 * node + 2, mid + 1, end);
+        segTree->tree[node] = segTree->tree[2 * node + 1] + segTree->tree[2 * node + 2];
+    }
+}
+
+int Get_query(SegmentTree* segTree, int node, int start, int end, int L, int R) {
+    if (R < start || end < L) {
+        return 0;
+    }
+    if (L <= start && end <= R) {
+        return segTree->tree[node];
+    }
+    int mid = (start + end) / 2;
+    int left_sum = Get_query(segTree, 2 * node + 1, start, mid, L, R);
+    int right_sum = Get_query(segTree, 2 * node + 2, mid + 1, end, L, R);
+    return left_sum + right_sum;
+}
+
+void Segtree_update(SegmentTree* segTree, int node, int start, int end, int idx, int val) {
+    if (start == end) {
+        segTree->tree[node] = val;
+    }
+    else {
+        int mid = (start + end) / 2;
+        if (start <= idx && idx <= mid) {
+            Segtree_update(segTree, 2 * node + 1, start, mid, idx, val);
+        }
+        else {
+            Segtree_update(segTree, 2 * node + 2, mid + 1, end, idx, val);
+        }
+        segTree->tree[node] = segTree->tree[2 * node + 1] + segTree->tree[2 * node + 2];
+    }
+}
+
+int main() {
+    int list[] = { 21, 7, 8, 19, 2, 9, 6, 10 };
+    int n = sizeof(list) / sizeof(list[0]);
+
+    SegmentTree* Tree = Seg_tree_const(list, n);
+
+    printf("1부터 4까지의 구간합 : %d\n", Get_query(Tree, 0, 0, n - 1, 1, 4));
+    Segtree_update(Tree, 0, 0, n - 1, 2, 15);
+    printf("트리 갱신 후 1부터 4까지의 구간합: %d\n", Get_query(Tree, 0, 0, n - 1, 1, 4));
+
+    free(Tree->tree);
+    free(Tree);
+    return 0;
+}
