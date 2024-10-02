@@ -1,4 +1,4 @@
-// 트라이 자료구조의 구현
+// 트라이 자료구조
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
